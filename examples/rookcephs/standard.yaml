@@ -1,0 +1,19 @@
+apiVersion: helm.hops.ops.com.ai/v1alpha1
+kind: RookCeph
+metadata:
+  name: rook-ceph
+  namespace: example-env
+spec:
+  clusterName: my-cluster
+  namespace: rook-ceph
+  labels:
+    team: platform
+    environment: production
+  providerConfigRef:
+    name: my-cluster
+    kind: ProviderConfig
+  values:
+    enableDiscoveryDaemon: true
+    csi:
+      enableRbdDriver: true
+      enableCephfsDriver: true

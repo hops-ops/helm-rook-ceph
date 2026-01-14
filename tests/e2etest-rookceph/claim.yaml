@@ -1,0 +1,8 @@
+apiVersion: helm.hops.ops.com.ai/v1alpha1
+kind: RookCeph
+metadata:
+  name: e2e-rook-ceph
+  namespace: e2e-test
+spec:
+  clusterName: e2e-cluster
+  namespace: rook-ceph

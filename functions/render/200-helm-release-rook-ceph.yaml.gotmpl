@@ -1,0 +1,36 @@
+{{- $state := $.state }}
+{{- $rookceph := $state.rookceph }}
+
+{{- /* Build Helm values */}}
+{{- $defaultValues := dict
+  "fullnameOverride" "rook-ceph"
+  "nameOverride" "rook-ceph"
+}}
+
+{{- $helmValues := dict }}
+{{- if $rookceph.overrideAllValues | len }}
+  {{- $helmValues = $rookceph.overrideAllValues }}
+{{- else }}
+  {{- $helmValues = mustMergeOverwrite $defaultValues $rookceph.values }}
+{{- end }}
+
+---
+apiVersion: helm.m.crossplane.io/v1beta1
+kind: Release
+metadata:
+  name: {{ $rookceph.name }}-helm-release
+  labels: {{ $rookceph.labels | toJson }}
+  annotations:
+    {{ setResourceNameAnnotation "helm-release" }}
+spec:
+  managementPolicies: {{ $rookceph.managementPolicies | toJson }}
+  providerConfigRef:
+    name: {{ $rookceph.providerConfigRef.name }}
+    kind: {{ $rookceph.providerConfigRef.kind }}
+  forProvider:
+    chart:
+      name: rook-ceph
+      repository: https://charts.rook.io/release
+      version: "v1.18.3"
+    namespace: {{ $rookceph.namespace }}
+    values: {{ $helmValues | toJson }}
